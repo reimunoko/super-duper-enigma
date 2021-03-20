@@ -15,7 +15,6 @@ namespace EmployeeService.Controllers
     [ApiController]
     public class DepartmentController : ControllerBase
     {
-        private readonly EmployeeContext context;
         private readonly IDepartmentService departmentService;
 
         public DepartmentController(IDepartmentService departmentService)
@@ -23,14 +22,6 @@ namespace EmployeeService.Controllers
 
             this.departmentService = departmentService;
         }
-
-        //[HttpGet]
-        //[EnableQuery(PageSize = 25, EnsureStableOrdering = false)]
-        //public IEnumerable<Department> GetDepartments()
-        //{
-        //    return context.Departments;
-
-        //}
 
         [HttpGet]
         [EnableQuery(PageSize = 25, EnsureStableOrdering = false)]
@@ -49,48 +40,7 @@ namespace EmployeeService.Controllers
         [HttpGet("search")]
         public IActionResult GetDepartments(string location, string deptName)
         {
-            var loc = location ?? string.Empty;
-            var dept = deptName ?? string.Empty;
-            
-           
             return Ok(departmentService.GetDepartmentEmployees(deptName, location));
-
-            //if (deptName == null && location != null)
-            //{
-                
-            //    //return Ok(await context.Departments.AsNoTracking().Where(d =>                  
-            //    //   d.Location.Contains(loc)).Include("Employees").Select(x => new {
-            //    //       DepartmentName = x.DeptName,
-            //    //       Location = x.Location,
-            //    //       Employees = x.Employees.Where(e => e.DepartmentId == x.Id).Select(ex => new { EmployeeName = ex.EmpName, Designation = ex.Designation })
-            //    //   }).ToListAsync());            
-            //}
-            //else if (location == null && deptName != null)
-            //{
-            //    return Ok(await context.Departments.AsNoTracking().Where(d =>
-            //       d.DeptName.Contains(dept)).Include("Employees").Select(x => new {
-            //           DepartmentName = x.DeptName,
-            //           Location = x.Location,
-            //           Employees = x.Employees.Where(e => e.DepartmentId == x.Id).Select(ex => new { EmployeeName = ex.EmpName, Designation = ex.Designation })
-            //       }).ToListAsync());
-            //}
-
-            //else if (deptName == null && location == null)
-            //{
-            //    return Ok(await context.Departments.AsNoTracking().Include("Employees").Select(x => new {
-            //        DepartmentName = x.DeptName,
-            //        Location = x.Location,
-            //        Employees = x.Employees.Where(e => e.DepartmentId == x.Id).Select(ex => new { EmployeeName = ex.EmpName, Designation = ex.Designation })
-            //    }).ToListAsync());
-            //}
-            //else
-            //{
-            //    return Ok(await context.Departments.AsNoTracking().Where(d =>
-            //       d.Location.Contains(loc.ToLower()) && d.DeptName.Contains(dept.ToLower())).Include("Employees").Select(x => new { DepartmentName = x.DeptName, Location = x.Location, 
-            //           Employees = x.Employees.Where(e => e.DepartmentId ==x.Id).Select(ex => new { EmployeeName = ex.EmpName, Designation = ex.Designation })
-            //       }).ToListAsync());
-            //}
-
         }
     }
 }
