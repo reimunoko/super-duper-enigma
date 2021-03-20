@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using EmployeeService.Data;
 using EmployeeService.Middleware;
 using EmployeeService.Utilities;
+using EmployeeService.Business.Configuration;
 
 namespace EmployeeService
 {
@@ -32,13 +33,16 @@ namespace EmployeeService
             //});
 
             services.AddDbContext<EmployeeContext>(options => {
-
                 options.UseSqlServer(Configuration.GetConnectionString(nameof(EmployeeContext)));
             });
+            services.AddDbContext<AppLogContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString(nameof(AppLogContext)));
+            });
+
             services.AddScoped<DbLogger>();
             services.AddOData();
-
-          
+            services.AddRepositoryConfiguration();
+            services.AddBusinessServiceConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,8 +53,9 @@ namespace EmployeeService
                 app.UseDeveloperExceptionPage();               
             }
 
-            app.UseMiddleware<GlobalExceptionMiddleware>();
-            app.UseMiddleware<RequestLoggerMiddleware>();
+            app.UseGlobalExceptionHandler();
+
+            app.UseRequestLogger();
 
             app.UseHttpsRedirection();
 

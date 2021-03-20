@@ -13,6 +13,7 @@ namespace EmployeeService.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Log> builder)
         {
+            builder.ToTable("Log");
             builder.Property("StackTrace").IsRequired(false);
             builder.Property("Code").IsRequired(false);
         }

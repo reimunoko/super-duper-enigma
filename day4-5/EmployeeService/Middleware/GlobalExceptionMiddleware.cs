@@ -30,7 +30,7 @@ namespace EmployeeService.Middleware
             {
                 await dbLogger.LogError(httpContext.TraceIdentifier, ex.Message, ex.StackTrace);
                 httpContext.Response.StatusCode = 500;
-                await httpContext.Response.WriteAsJsonAsync("Something went wrong, we will get back to you as soon as we can.");
+                await httpContext.Response.WriteAsJsonAsync(ex.Message);
 
             }                       
         }

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using EmployeeService.Data;
 using EmployeeService.Utilities;
 
 namespace EmployeeService.Middleware
@@ -27,17 +24,20 @@ namespace EmployeeService.Middleware
         {
            var requestHeaders = httpContext.Request.Headers.ToDictionary(hc => hc.Key, hc => hc.Value.ToString());
             
-
-
             using (var scope = provider.CreateScope())
             {
                 var dbLogger = scope.ServiceProvider.GetRequiredService<DbLogger>();
                 await dbLogger.LogInformation(httpContext.TraceIdentifier, $"Request { httpContext.Request.Method} {httpContext.Request.Path} {httpContext.Request.QueryString}");
                 await dbLogger.LogInformation(httpContext.TraceIdentifier, System.Text.Json.JsonSerializer.Serialize(requestHeaders));
-
             }
 
             await next(httpContext);
+
+            using (var scope = provider.CreateScope())
+            {
+                var dbLogger = scope.ServiceProvider.GetRequiredService<DbLogger>();
+                await dbLogger.LogInformation(httpContext.TraceIdentifier, $"Response { httpContext.Request.Method} {httpContext.Request.Path} {httpContext.Response.StatusCode}");           
+            }
         }
     }
 }

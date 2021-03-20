@@ -13,13 +13,10 @@ namespace EmployeeService.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Department> builder)
         {
-            //builder.HasData(new Department { Id = 1, DeptName = "HR", Location="StarCity" });
-            //builder.HasData(new Department { Id = 2, DeptName = "Finance", Location = "CentralCity" });
-            //builder.HasData(new Department { Id = 3, DeptName = "IT", Location = "Gotham" });
-
-         
-
-
+            builder.HasData(new Department { Id = 1, DeptName = "HR", Location = "StarCity" });
+            builder.HasData(new Department { Id = 2, DeptName = "Finance", Location = "CentralCity" });
+            builder.HasData(new Department { Id = 3, DeptName = "IT", Location = "Gotham" });
+            builder.ToTable("Department");
         }
     }
 }

@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EmployeeService.Data.Migrations
+namespace EmployeeService.EFMigration.Migrations
 {
     [DbContext(typeof(EmployeeContext))]
-    [Migration("20210319112249_logTable")]
-    partial class logTable
+    [Migration("20210320073023_initialversionemployeecontext")]
+    partial class initialversionemployeecontext
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,7 +35,27 @@ namespace EmployeeService.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Department");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DeptName = "HR",
+                            Location = "StarCity"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DeptName = "Finance",
+                            Location = "CentralCity"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DeptName = "IT",
+                            Location = "Gotham"
+                        });
                 });
 
             modelBuilder.Entity("EmployeeService.Domain.Entities.Employee", b =>
@@ -61,34 +81,33 @@ namespace EmployeeService.Data.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Employees");
-                });
+                    b.ToTable("Employee");
 
-            modelBuilder.Entity("EmployeeService.Domain.Entities.Log", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Code")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CorrelationId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Level")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StackTrace")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Logs");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DepartmentId = 1,
+                            Designation = "HR",
+                            EmpName = "John",
+                            Salary = 1000000
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DepartmentId = 2,
+                            Designation = "Finance Manager",
+                            EmpName = "James",
+                            Salary = 1000000
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DepartmentId = 3,
+                            Designation = "Engineer",
+                            EmpName = "Jonathan",
+                            Salary = 1000000
+                        });
                 });
 
             modelBuilder.Entity("EmployeeService.Domain.Entities.Employee", b =>

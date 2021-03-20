@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EmployeeService.Data.Configuration;
 using EmployeeService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,15 +17,13 @@ namespace EmployeeService.Data
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(EmployeeContext).Assembly);
-
+        {            
+            modelBuilder.ApplyConfiguration(new DepartmentConfig());
+            modelBuilder.ApplyConfiguration(new EmployeeConfig());            
             base.OnModelCreating(modelBuilder);
         }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
 
-        public DbSet<Log> Logs { get; set; }
-        
     }
 }

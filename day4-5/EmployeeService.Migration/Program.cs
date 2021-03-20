@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace EmployeeService.Data
+namespace EmployeeService.EFMigration
 {
     class Program
     {
