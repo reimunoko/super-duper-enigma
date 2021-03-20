@@ -23,11 +23,7 @@ namespace EmployeeService.EFMigration
  
             optionsBuilder.UseSqlServer(
                                         configuration.GetConnectionString(nameof(EmployeeContext)),                                 
-                                            b => b.MigrationsAssembly(typeof(EmployeeContextFactory).Assembly.FullName));
-
-            optionsBuilder.UseSqlServer(
-                                       configuration.GetConnectionString(nameof(EmployeeContext)),
-                                           b => b.MigrationsAssembly(typeof(EmployeeContextFactory).Assembly.FullName));
+                                            b => b.MigrationsAssembly(typeof(EmployeeContextFactory).Assembly.FullName));          
 
             return new EmployeeContext(optionsBuilder.Options);
         }
