@@ -31,7 +31,7 @@ namespace EmployeeService.Controllers
 
         }
 
-        [HttpGet("searchbyId")]
+        [HttpGet("search/{Id}")]
         public async Task<IActionResult> GetDepartments(string Id)
         {            
             return Ok(await departmentService.GetDepartmentEmployees(Id));
