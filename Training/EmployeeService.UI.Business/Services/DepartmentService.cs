@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using EmployeeService.UI.BlazorServer.Dtos;
+using EmployeeService.UI.Business.Dtos;
 
-namespace EmployeeService.UI.BlazorServer.Services
+namespace EmployeeService.UI.Business.Services
 {
     public class DepartmentService : IDepartmentService
     {

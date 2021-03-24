@@ -1,7 +1,8 @@
 ﻿@page "/search"
-@using Services
+@using EmployeeService.UI.Business.Dtos
+@using EmployeeService.UI.Business.Services
 @inject IDepartmentService deptService
-<h3>Search</h3>
+<h3>Employee Search</h3>
 <div class="container">
     <div class="form-group">
         <div class="row">
@@ -21,7 +22,7 @@
                 }
                 else
                 {
-                   <div></div>
+                    <div></div>
                 }
             </div>
         </div>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EmployeeService.UI.BlazorServer.Dtos
+namespace EmployeeService.UI.Business.Dtos
 {
     public class SearchDto
     {

@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EmployeeService.UI.BlazorServer.Services;
+using EmployeeService.UI.BlazorServer.Data;
+using EmployeeService.UI.Business.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -29,10 +30,10 @@ namespace EmployeeService.UI.BlazorServer
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<IDepartmentService, DepartmentService>();
-           // services.AddSingleton<WeatherForecastService>();                     
+
             services.AddHttpClient("fullsearch", c =>
             {
-                c.BaseAddress = new Uri("https://localhost:44388/api/department/fullsearch");               
+                c.BaseAddress = new Uri("https://localhost:44388/api/department/fullsearch");
             });
         }
 
