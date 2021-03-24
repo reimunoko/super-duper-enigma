@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeService.Business.Dto
+namespace EmployeeService.UI.Business.Model.Dto
 {
     public class DepartmentIdSearchDto
     {
@@ -29,13 +29,6 @@ namespace EmployeeService.Business.Dto
         public string Designation { get; set; }
     }
 
-    public class SearchDto
-    {
-        public string EmployeeName { get; set; }
-        public string Designation { get; set; }        
-        public string DepartmentName { get; set; }
-        public string Location { get; set; }
-
-    }
+ 
 
 }

@@ -9,4 +9,8 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EmployeeService.Business.Model\EmployeeService.Business.Model.csproj" />
+  </ItemGroup>
+
 </Project>

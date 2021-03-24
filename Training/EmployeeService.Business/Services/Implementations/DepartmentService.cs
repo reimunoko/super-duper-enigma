@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EmployeeService.Business.Dto;
 using EmployeeService.Business.Services.Interfaces;
 using EmployeeService.Data.Repositories.Interfaces;
 using EmployeeService.Domain.Entities;
+using EmployeeService.UI.Business.Model.Dto;
 
 namespace EmployeeService.Business.Services.Implementations
 {
@@ -17,6 +17,28 @@ namespace EmployeeService.Business.Services.Implementations
         public DepartmentService(IDepartmentRespository departmentRespository)
         {
             this.departmentRespository = departmentRespository;
+        }
+
+        public async Task Add(DepartmentDto department)
+        { 
+            //AutoMapper
+            Department entity = new Department()
+            {
+                
+                DeptName = department.Name,
+                Location = department.Location,
+
+            };
+
+            await departmentRespository.AddAsync(entity);
+        }
+
+         
+
+        public async Task Delete(int id)
+        {
+            
+            await departmentRespository.DeleteAsync(id);
         }
 
         public List<SearchDto> GetAllByKeyword(string keyword)
@@ -77,9 +99,25 @@ namespace EmployeeService.Business.Services.Implementations
             }).ToList();
         }
 
-        public async Task<IReadOnlyList<Department>> GetDepartmentEmployees()
+        public async Task<IReadOnlyList<DepartmentDto>> GetDepartments()
         {
-           return await departmentRespository.ListAllAsync();
+           var departments = await departmentRespository.ListAllAsync();
+           return departments.Select(s => new DepartmentDto() { Id = s.Id, Name = s.DeptName, Location = s.Location }).ToList();
+        }
+
+        public async Task Update(DepartmentDto department)
+        {
+            //AutoMapper
+
+            Department entity = new Department()
+            {
+                Id = department.Id,
+                DeptName = department.Name,
+                Location = department.Location,
+
+            };
+
+            await departmentRespository.UpdateAsync(entity);          
         }
     }
 }

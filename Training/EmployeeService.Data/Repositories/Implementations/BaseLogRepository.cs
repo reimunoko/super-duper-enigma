@@ -26,12 +26,22 @@ namespace EmployeeService.Data.Repositories.Implementations
             return entity;
         }
 
+        public Task<T> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<T> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
         public Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

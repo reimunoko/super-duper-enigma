@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EmployeeService.UI.Business.Dtos
+namespace EmployeeService.UI.Business.Model.Dto
 {
     public class SearchDto
     {

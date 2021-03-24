@@ -1,46 +1,63 @@
-﻿@page "/fetchdata"
+﻿@page "/departments"
 
-@using EmployeeService.UI.BlazorServer.Data
-@inject WeatherForecastService ForecastService
+@using EmployeeService.UI.Business.Services
+@using EmployeeService.UI.Business.Model.Dto
+@inject IDepartmentService deptService
 
-<h1>Weather forecast</h1>
+<h1>Departments</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
-
-@if (forecasts == null)
+@if(Departments == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Please wait...</em></p>
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th scope="col">Id</th>
+                <td scope="col">Department Name</td>
+                <td scope="col">Location</td>
+                <td scope="col">Edit</td>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @for (int i = 0; i < Departments.Count; i++)
             {
+                DepartmentDto department = @Departments[i];
+
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td scope="row">@department.Id</td>
+                    <td><input type="text" @bind-value="@department.Name" disabled="@department.IsDisabled" /></td>
+                    <td><input type="text" @bind-value="@department.Location" disabled="@department.IsDisabled" /></td>
+                    <td><EditDepartment CanEdit="@((args)=> HandleCanEdit(args.Item1,args.Item2))" CanSave="HandleCanSave" @bind-Department="@department"></EditDepartment></td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
+
 @code {
-    private WeatherForecast[] forecasts;
+
+    //private bool IsDisabled { get; set; } = true;
+
+    private List<DepartmentDto> Departments { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        Departments = await deptService.GetAll();
     }
+
+    private void HandleCanEdit(bool canEdit, int id)
+    {
+        Departments.First(x => x.Id == id).IsDisabled = canEdit;
+    }
+
+    private async Task HandleCanSave(DepartmentDto arg)
+    {
+        await deptService.Update(arg);
+    }
+
+
 }

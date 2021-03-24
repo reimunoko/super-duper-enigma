@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EmployeeService.UI.BlazorServer.Data;
+using EmployeeService.UI.Business.Configuration;
 using EmployeeService.UI.Business.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -30,11 +31,7 @@ namespace EmployeeService.UI.BlazorServer
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<IDepartmentService, DepartmentService>();
-
-            services.AddHttpClient("fullsearch", c =>
-            {
-                c.BaseAddress = new Uri("https://localhost:44388/api/department/fullsearch");
-            });
+            services.AddServiceConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -22,9 +22,26 @@ namespace EmployeeService.Data.Repositories.Implementations
         {
             await context.Set<T>().AddAsync(entity);
             await context.SaveChangesAsync(cancellationToken);
-
             return entity;
         }
+
+        public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        {
+            context.Set<T>().Update(entity);
+            await context.SaveChangesAsync(cancellationToken);
+            return entity;
+        }
+
+        public async Task<T> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var keyValues = new object[] { id };
+            var entity = await context.Set<T>().FindAsync(keyValues, cancellationToken);
+            context.Set<T>().Remove(entity);
+            await context.SaveChangesAsync(cancellationToken);
+            return entity;
+        }
+
+
 
         public async Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default)
         {

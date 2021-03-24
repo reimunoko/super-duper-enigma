@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EmployeeService.Business.Services.Interfaces;
 using EmployeeService.Data;
 using EmployeeService.Domain.Entities;
+using EmployeeService.UI.Business.Model.Dto;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +24,18 @@ namespace EmployeeService.Controllers
             this.departmentService = departmentService;
         }
 
-        [HttpGet]
-        [EnableQuery(PageSize = 25, EnsureStableOrdering = false)]
-        public async Task<IEnumerable<Department>> GetDepartments()
-        {
-            return await departmentService.GetDepartmentEmployees();
+        //[HttpGet]
+        //[EnableQuery(PageSize = 25, EnsureStableOrdering = false)]
+        //public async Task<IEnumerable<Department>> GetDepartments()
+        //{
+        //    return await departmentService.GetDepartmentEmployees();
 
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> GetDepartments()
+        {
+            return Ok(await departmentService.GetDepartments());
         }
 
         [HttpGet("search/{Id}")]
@@ -47,6 +54,27 @@ namespace EmployeeService.Controllers
         public IActionResult GetAll(string keyword)
         {
             return Ok(departmentService.GetAllByKeyword(keyword));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddDepartment(DepartmentDto department)
+        {
+            await departmentService.Add(department);
+            return NoContent();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateDepartment(DepartmentDto department)
+        {
+            await departmentService.Update(department);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult>  DeleteDepartment(int id)
+        {
+            await departmentService.Delete(id);
+            return NoContent();
         }
     }
 }

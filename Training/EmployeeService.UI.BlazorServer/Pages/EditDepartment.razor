@@ -1,0 +1,54 @@
+﻿@using EmployeeService.UI.Business.Model.Dto
+
+
+<button @onclick="HandleEditClick" class="btn btn-primary" disabled="@IsDisabled">
+    @Action
+</button>
+@code {
+
+    private bool ToggleAction { get; set; } = false;
+
+    private string Action { get; set; } = "Edit";
+
+    private bool IsDisabled { get; set; } = false;
+
+    protected override Task OnInitializedAsync()
+    {
+
+        return base.OnInitializedAsync();
+    }
+
+    private async Task HandleEditClick()
+    {
+        if (IsDisabled)
+            return;
+
+        if (Action == "Save")
+        {
+            IsDisabled = true;
+            await CanSave.InvokeAsync(Department);
+            IsDisabled = false;
+        }
+
+
+        ToggleAction = ToggleAction ? false : true;
+
+        Action = ToggleAction ? "Save" : "Edit";
+
+        await CanEdit.InvokeAsync((!ToggleAction, Department.Id));
+
+    }
+
+    [Parameter]
+    public DepartmentDto Department { get; set; }
+
+    [Parameter]
+    public EventCallback<(bool, int)> CanEdit { get; set; }
+
+
+    [Parameter]
+    public EventCallback<DepartmentDto> CanSave { get; set; }
+
+    [Parameter]
+    public EventCallback<DepartmentDto> DepartmentChanged { get; set; }
+}
