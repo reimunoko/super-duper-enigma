@@ -37,5 +37,14 @@ namespace EmployeeService.Data.Repositories.Implementations
             return context.Departments.AsNoTracking()
                   .Where(d => d.DeptName.Contains(name)).Include("Employees").AsEnumerable();
         }
+
+        public IEnumerable<Department> GetAll(string keyword)
+        {
+           
+          return context.Departments.AsNoTracking()
+                        .Where(d => d.Location.Contains(keyword) || 
+                         d.DeptName.Contains(keyword) ||
+                         d.Employees.Any(x => x.EmpName.Contains(keyword))).Include("Employees").AsEnumerable();                
+        }
     }
 }

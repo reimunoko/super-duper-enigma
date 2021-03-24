@@ -19,11 +19,15 @@ namespace EmployeeService.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {            
             modelBuilder.ApplyConfiguration(new DepartmentConfig());
-            modelBuilder.ApplyConfiguration(new EmployeeConfig());            
+            modelBuilder.ApplyConfiguration(new EmployeeConfig());
+
+          //  modelBuilder.Entity<EmployeeSearch>().ToView("EmployeeSearch");
+
             base.OnModelCreating(modelBuilder);
         }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
+       // public DbSet<EmployeeSearch> EmployeeSearches { get; set; }
 
     }
 }

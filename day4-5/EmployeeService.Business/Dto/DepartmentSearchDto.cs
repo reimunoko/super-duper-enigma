@@ -29,4 +29,13 @@ namespace EmployeeService.Business.Dto
         public string Designation { get; set; }
     }
 
+    public class SearchDto
+    {
+        public string EmployeeName { get; set; }
+        public string Designation { get; set; }        
+        public string DepartmentName { get; set; }
+        public string Location { get; set; }
+
+    }
+
 }

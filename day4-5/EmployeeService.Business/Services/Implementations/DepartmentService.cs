@@ -19,7 +19,16 @@ namespace EmployeeService.Business.Services.Implementations
             this.departmentRespository = departmentRespository;
         }
 
-      
+        public List<SearchDto> GetAllByKeyword(string keyword)
+        {
+            return this.departmentRespository.GetAll(keyword).Select(x => BuildData(x.Employees.First(e => e.DepartmentId == x.Id), x.DeptName, x.Location)).ToList();
+
+            SearchDto BuildData(Employee e, string deptName, string location)
+            {
+                return new SearchDto() { EmployeeName = e.EmpName, Designation = e.Designation, DepartmentName = deptName, Location = location };
+            }
+        }
+
         public async Task<DepartmentIdSearchDto> GetDepartmentEmployees(string Id)
         {
             var isValid = Int32.TryParse(Id, out int result);

@@ -42,5 +42,11 @@ namespace EmployeeService.Controllers
         {
             return Ok(departmentService.GetDepartmentEmployees(deptName, location));
         }
+
+        [HttpGet("fullsearch")]
+        public IActionResult GetAll(string keyword)
+        {
+            return Ok(departmentService.GetAllByKeyword(keyword));
+        }
     }
 }

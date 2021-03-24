@@ -14,5 +14,7 @@ namespace EmployeeService.Business.Services.Interfaces
         List<DepartmentEmployeeSearchDto> GetDepartmentEmployees(string name, string location);
 
         Task<IReadOnlyList<Department>> GetDepartmentEmployees();
+
+       List<SearchDto> GetAllByKeyword(string keyword);
     }
 }

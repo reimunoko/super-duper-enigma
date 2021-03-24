@@ -14,7 +14,9 @@ namespace EmployeeService.Data.Repositories.Interfaces
 
         IEnumerable<Department> GetDepartmentEmployeesByName(string name);
 
-        IEnumerable<Department> GetDepartmentEmployeesByNameAndLocation(string name, string location);        
+        IEnumerable<Department> GetDepartmentEmployeesByNameAndLocation(string name, string location);
+
+        IEnumerable<Department> GetAll(string keyword);
 
     }
 }
