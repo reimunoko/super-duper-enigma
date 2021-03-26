@@ -27,9 +27,9 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        @foreach (var column in Columns ?? Array.Empty<string>())
+                        @foreach (var column in Columns ?? new Dictionary<string, string>())
                         {
-                            <td scope="col" @onclick="@(o => HandleOrder(@column))">@column</td>
+                            <td scope="col" @onclick="@(o => HandleOrder(@column.Key))">@column.Value</td>
                         }
                     </tr>
                 </thead>
@@ -42,7 +42,7 @@
                             <tr>
                                 @foreach (var column in Columns)
                                 {
-                                    <td scope="row">@dsprop.First(x => x.Name == column).GetValue(item, null)</td>
+                                    <td scope="row">@dsprop.First(x => x.Name == column.Key).GetValue(item, null)</td>
                                 }
                             </tr>
                         }
@@ -60,7 +60,7 @@
                             <tr>
                                 @foreach (var column in Columns)
                                 {
-                                    <td scope="row">@dsprop.First(x => x.Name == column).GetValue(currentItem, null)</td>
+                                    <td scope="row">@dsprop.First(x => x.Name == column.Key).GetValue(currentItem, null)</td>
                                 }
 
                                 <td scope="row"><button type="button" class="btn btn-primary" @onclick="@(() => HandleDeleteClick((TItem)currentItem))">Delete</button></td>
@@ -126,8 +126,14 @@
         set
         {
             if(pageSize == 0 || isPageSizeChanged)
+            {
                 pageSize = value;
+            }
 
+            if (PageSizeRange != null && !PageSizeRange.Any(x => x == pageSize))
+            {
+                pageSize = PageSizeRange.First();
+            }
 
             currentPage = 0;
             if (DataSource != null)
@@ -174,12 +180,12 @@
                 totalSize = value.Count();
                 FilterDataSource = value.Skip(currentPage * pageSize).Take(pageSize);
 
-                if (ColumnOrderState.Count() == 0)
+                if (ColumnOrderState.Count() == 0 && value.Any())
                 {
 
                     var columns = value.First().GetType().GetProperties()
                                     .Where(x => Attribute.IsDefined(x, typeof(AcmeGridColumnAttribute)))
-                                    .Select(p => p.GetCustomAttribute<AcmeGridColumnAttribute>().Name);
+                                    .Select(p => p.Name);
 
                     foreach (var column in columns)
                     {
@@ -190,6 +196,10 @@
 
         }
 
+        if (!parameters.TryGetValue<List<int>>(nameof(PageSizeRange), out var pageSizeRange) && PageSizeRange == null)
+        {
+            PageSizeRange = new List<int>() { 1, 2, 4 };
+        }
         return base.SetParametersAsync(parameters);
 
     }
@@ -248,8 +258,8 @@
     [Parameter]
     public EventCallback<TItem> DeleteCallback { get; set; }
 
-    public IEnumerable<string> Columns => DataSource == null || !DataSource.Any() ? Array.Empty<string>() : DataSource.First().GetType().GetProperties()
+    public Dictionary<string, string> Columns => DataSource == null || !DataSource.Any() ? new Dictionary<string, string>() : DataSource.First().GetType().GetProperties()
                  .Where(x => Attribute.IsDefined(x, typeof(AcmeGridColumnAttribute)))
-                 .Select(p => p.GetCustomAttribute<AcmeGridColumnAttribute>().Name);
+                 .Select(p => new { Name = p.Name, DisplayName = p.GetCustomAttribute<AcmeGridColumnAttribute>().Name }).ToDictionary(k => k.Name, v => v.DisplayName);
 
 }

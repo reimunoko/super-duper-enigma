@@ -17,7 +17,8 @@
         <div class="col-lg-12">
             @if (IsLoaded)
             {
-                <SearchResults @bind-Results="@results"></SearchResults>
+               /* <SearchResults @bind-Results="@results"></SearchResults>*/
+               <AcmeGrid DataSource="@results" TItem="SearchDto" PageSize="3"  />
             }
             else
             {
