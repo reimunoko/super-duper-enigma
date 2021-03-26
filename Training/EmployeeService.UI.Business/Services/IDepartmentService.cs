@@ -10,7 +10,7 @@ namespace EmployeeService.UI.Business.Services
     {
         Task<List<SearchDto>> Search(string keyword);
 
-        Task<List<DepartmentDto>> GetAll();
+        Task<List<DepartmentDto>> GetAll(int currentPage, int pageSize);
         Task Add(DepartmentDto department);
 
         Task Update(DepartmentDto department);

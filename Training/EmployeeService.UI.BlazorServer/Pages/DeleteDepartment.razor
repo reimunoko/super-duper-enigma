@@ -1,0 +1,54 @@
+﻿@page "/Delete"
+
+@using EmployeeService.UI.Business.Services
+@using EmployeeService.UI.Business.Model.Dto
+@inject IDepartmentService deptService
+
+<h3>Delete Department</h3>
+
+<div>
+    <div>
+        @if (isGridLoaded)
+        {
+            <label>
+                Delete?
+                <input type="checkbox" @bind-value="@ShowDeleteButton" />
+            </label>
+        }
+    </div>
+    <div>
+        <AcmeGrid DataSource="@Departments" PageSize="1" TItem="DepartmentDto"
+                  PageSizeRange="@pageSizeRange" DeleteCallback="OnDelete" EnableDelete="ShowDeleteButton" LoadCallback="AfterGridLoad" />
+    </div>
+</div>
+
+
+
+
+
+@code {
+    private List<DepartmentDto> Departments { get; set; }
+
+    private List<int> pageSizeRange { get; set; }
+
+    private bool ShowDeleteButton { get; set; }
+
+    private bool isGridLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pageSizeRange = new List<int> { 1, 2, 4 };
+        ShowDeleteButton = false;
+        Departments = await deptService.GetAll(0, 10);
+    }
+
+    private void OnDelete(DepartmentDto department)
+    {
+        Departments.Remove(department);
+    }
+
+    private void AfterGridLoad(bool isloaded)
+    {
+        isGridLoaded = true;
+    }
+}

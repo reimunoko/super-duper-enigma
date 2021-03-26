@@ -14,6 +14,8 @@ namespace EmployeeService.Data.Repositories.Interfaces
 
         Task<IReadOnlyList<T>> ListAllAsync(CancellationToken cancellationToken = default);
 
+     
+
         Task<T> DeleteAsync(int id, CancellationToken cancellationToken = default);
         Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default);
     }

@@ -25,17 +25,17 @@ namespace EmployeeService.Controllers
         }
 
         //[HttpGet]
-        //[EnableQuery(PageSize = 25, EnsureStableOrdering = false)]
-        //public async Task<IEnumerable<Department>> GetDepartments()
+        //[EnableQuery(PageSize = 100, EnsureStableOrdering = false)]
+        //public async Task<IEnumerable<DepartmentDto>> GetDepartments()
         //{
-        //    return await departmentService.GetDepartmentEmployees();
+        //    return await departmentService.GetDepartments();
 
         //}
 
         [HttpGet]
-        public async Task<IActionResult> GetDepartments()
+        public async Task<IActionResult> GetDepartments(int currentPage, int pageSize)
         {
-            return Ok(await departmentService.GetDepartments());
+            return Ok(await departmentService.GetDepartments(currentPage, pageSize));
         }
 
         [HttpGet("search/{Id}")]

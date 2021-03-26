@@ -1,0 +1,244 @@
+﻿@using System.Dynamic
+@using System.Linq
+@using EmployeeService.UI.BlazorServer.ComponentModel
+@using EmployeeService.UI.Model
+@using System.Reflection
+@typeparam TItem
+<div>
+
+    @if (@DataSource == null)
+    {
+        <p><em>Please wait..</em></p>
+    }
+    else
+    {
+        <div>
+            <label>
+                <label>
+                    Pagesize
+                    <select @bind="@PageSize">
+                        @foreach (var item in PageSizeRange)
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    </select>
+                </label>
+            </label>
+        </div>
+        <div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        @foreach (var column in Columns ?? Array.Empty<string>())
+                        {
+                            <td scope="col" @onclick="@(o => HandleOrder(@column))">@column</td>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!EnableDelete)
+                    {
+                        @foreach (TItem item in FilterDataSource ?? Array.Empty<TItem>())
+                        {
+                            var dsprop = item.GetType().GetProperties();
+                            <tr>
+                                @foreach (var column in Columns)
+                                {
+                                    <td scope="row">@dsprop.First(x => x.Name == column).GetValue(item, null)</td>
+                                }
+                            </tr>
+                        }
+                    }
+
+                    @if (EnableDelete)
+                    {
+                        @foreach (TItem item in FilterDataSource ?? Array.Empty<TItem>())
+                        {
+                            var currentItem = item;
+
+                            var dsprop = currentItem.GetType().GetProperties();
+                            var dspropKey = currentItem.GetType().GetProperties().FirstOrDefault(p => Attribute.IsDefined(p, typeof(AcmeGridKeyColumnAttribute)));
+
+                            <tr>
+                                @foreach (var column in Columns)
+                                {
+                                    <td scope="row">@dsprop.First(x => x.Name == column).GetValue(currentItem, null)</td>
+                                }
+
+                                @if (dspropKey != null)
+                                {
+
+                                    <td scope="row"><button type="button" class="btn btn-primary" @onclick="@(() => DeleteCallback.InvokeAsync((TItem)currentItem))">Delete</button></td>
+                                }
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+
+            @if (DataSource.Any())
+            {
+                <button style="margin-right:1em" type="button" @onclick="@(e => HandlePrev())" class="btn btn-secondary" disabled="@(!(@currentPage > 0))">Prev</button>
+            }
+
+            @for (int i = currentPage; i < (totalSize) && i < (currentPage + 2) && (totalSize - ((currentPage + 1) * pageSize)) > 0; i++)
+            {
+                var pageNum = i;
+                <button style="margin-right:1em" type="button" @onclick="@(e => HandleNext(pageNum))" class="btn @((i == currentPage) ? currentPageClass : "")">@(i + 1)</button>
+            }
+
+            @if ((totalSize - ((currentPage + 1) * pageSize)) > 0)
+            {
+                <button type="button" @onclick="@(e => HandleNext(-1))" class="btn btn-secondary">Next</button>
+            }
+
+        </div>
+    }
+
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public IEnumerable<TItem> DataSource { get; set; }
+
+    public IEnumerable<TItem> FilterDataSource { get; set; }
+
+    private string currentPageClass = "btn-primary";
+
+    private Dictionary<string, int> ColumnOrderState = new();
+
+    private int totalSize;
+
+    private int currentPage = 0;
+
+    private int pageSize;
+
+
+    [Parameter]
+    public int PageSize
+    {
+
+        get
+        {
+            return pageSize;
+        }
+
+        set
+        {
+            pageSize = value;
+            currentPage = 0;
+            if (DataSource != null)
+            {
+                FilterDataSource = DataSource.Skip(currentPage * pageSize).Take(pageSize);
+            }
+
+        }
+
+    }
+
+    [Parameter]
+    public List<int> PageSizeRange { get; set; }
+
+    [Parameter]
+    public bool EnableEdit { get; set; }
+
+    [Parameter]
+    public bool EnableDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> LoadCallback { get; set; }
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            LoadCallback.InvokeAsync(true);
+        }
+    }
+
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+
+        if (parameters.TryGetValue<IEnumerable<TItem>>(nameof(DataSource), out var value))
+        {
+            if (value != null)
+            {
+                totalSize = value.Count();
+                FilterDataSource = value.Skip(currentPage * pageSize).Take(pageSize);
+
+                if (ColumnOrderState.Count() == 0)
+                {
+
+                    var columns = value.First().GetType().GetProperties()
+                                    .Where(x => Attribute.IsDefined(x, typeof(AcmeGridColumnAttribute)))
+                                    .Select(p => p.GetCustomAttribute<AcmeGridColumnAttribute>().Name);
+
+                    foreach (var column in columns)
+                    {
+                        ColumnOrderState.Add(column, -1);
+                    }
+                }
+            }
+
+        }
+
+        return base.SetParametersAsync(parameters);
+
+    }
+
+    private void HandleNext(int pageNum)
+    {
+        if (pageNum >= 0)
+        {
+            currentPage = pageNum == 0 ? 0 : pageNum;
+        }
+        else
+        {
+            currentPage = currentPage + 1;
+        }
+
+        FilterDataSource = DataSource.Skip(currentPage * pageSize).Take(pageSize);
+    }
+
+    private void HandlePrev()
+    {
+        currentPage = currentPage - 1;
+
+        FilterDataSource = DataSource.Skip(currentPage * pageSize).Take(pageSize);
+    }
+
+    private void HandleOrder(string columnName)
+    {
+
+        ColumnOrderState[columnName] = ColumnOrderState[columnName] == 0 ? 1 : 0;
+
+        if (ColumnOrderState[columnName] == 0)
+        {
+            DataSource = DataSource.OrderBy(o => o.GetType().GetProperty(columnName).GetValue(o, null));
+            FilterDataSource = DataSource.Skip(0 * pageSize).Take(pageSize);
+        }
+        else
+        {
+            DataSource = DataSource.OrderByDescending(o => o.GetType().GetProperty(columnName).GetValue(o, null));
+            FilterDataSource = DataSource.Skip(0 * pageSize).Take(pageSize);
+        }
+
+    }
+
+    [Parameter]
+    public EventCallback<TItem> DeleteCallback { get; set; }
+
+    public IEnumerable<string> Columns => DataSource == null || !DataSource.Any() ? Array.Empty<string>() : DataSource.First().GetType().GetProperties()
+                 .Where(x => Attribute.IsDefined(x, typeof(AcmeGridColumnAttribute)))
+                 .Select(p => p.GetCustomAttribute<AcmeGridColumnAttribute>().Name);
+
+}

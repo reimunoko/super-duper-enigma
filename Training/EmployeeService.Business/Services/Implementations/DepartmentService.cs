@@ -99,10 +99,12 @@ namespace EmployeeService.Business.Services.Implementations
             }).ToList();
         }
 
-        public async Task<IReadOnlyList<DepartmentDto>> GetDepartments()
+        public async Task<IReadOnlyList<DepartmentDto>> GetDepartments(int currentPage, int pageSize)
         {
            var departments = await departmentRespository.ListAllAsync();
-           return departments.Select(s => new DepartmentDto() { Id = s.Id, Name = s.DeptName, Location = s.Location }).ToList();
+
+           return departments.Skip(currentPage * pageSize).Take(pageSize)
+               .Select(s => new DepartmentDto() { Id = s.Id, Name = s.DeptName, Location = s.Location }).ToList();
         }
 
         public async Task Update(DepartmentDto department)

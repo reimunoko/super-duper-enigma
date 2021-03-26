@@ -13,7 +13,7 @@ namespace EmployeeService.Business.Services.Interfaces
         Task<DepartmentIdSearchDto> GetDepartmentEmployees(string Id);
         List<DepartmentEmployeeSearchDto> GetDepartmentEmployees(string name, string location);
 
-        Task<IReadOnlyList<DepartmentDto>> GetDepartments();
+        Task<IReadOnlyList<DepartmentDto>> GetDepartments(int currentPage, int pageSize);
 
         List<SearchDto> GetAllByKeyword(string keyword);
 

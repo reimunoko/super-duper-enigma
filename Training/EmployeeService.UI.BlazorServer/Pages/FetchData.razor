@@ -1,4 +1,4 @@
-﻿@page "/departments"
+﻿@page "/edit"
 
 @using EmployeeService.UI.Business.Services
 @using EmployeeService.UI.Business.Model.Dto
@@ -6,47 +6,102 @@
 
 <h1>Departments</h1>
 
-@if(Departments == null)
+@if (Departments == null)
 {
     <p><em>Please wait...</em></p>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <td scope="col">Department Name</td>
-                <td scope="col">Location</td>
-                <td scope="col">Edit</td>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Departments.Count; i++)
-            {
-                DepartmentDto department = @Departments[i];
+    <div>
+        <div>
+            <label>
+                Pagesize
+                <select @bind="@SelectSize">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </label>
+           
+        </div>
+        <div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <td scope="col">Department Name</td>
+                        <td scope="col" @onclick="@HandleOrderChange">Location</td>
+                        <td scope="col">Edit</td>
+                    </tr>
+                </thead>
+                <tbody>
 
-                <tr>
-                    <td scope="row">@department.Id</td>
-                    <td><input type="text" @bind-value="@department.Name" disabled="@department.IsDisabled" /></td>
-                    <td><input type="text" @bind-value="@department.Location" disabled="@department.IsDisabled" /></td>
-                    <td><EditDepartment CanEdit="@((args)=> HandleCanEdit(args.Item1,args.Item2))" CanSave="HandleCanSave" @bind-Department="@department"></EditDepartment></td>
-                </tr>
+                    @for (int i = 0; i < Departments.Count; i++)
+                    {
+                        DepartmentDto department = @Departments[i];
+
+                        <tr>
+                            <td scope="row">@department.Id</td>
+                            <td><input type="text" @bind-value="@department.Name" disabled="@department.IsDisabled" /></td>
+                            <td><input type="text" @bind-value="@department.Location" disabled="@department.IsDisabled" /></td>
+                            <td><EditDepartment CanEdit="@((args)=> HandleCanEdit(args.Item1,args.Item2))" CanSave="HandleCanSave" @bind-Department="@department"></EditDepartment></td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            
+            <button type="button" @onclick="HandlePrevClick" disabled="@(!(@currentPage > 0))">Prev</button>
+
+            @if ((@AllDepartments.Count - ((@currentPage + 1) * @pageSize)) > 0)
+            {
+                <button type="button" @onclick="HandleNextClick">Next</button>
             }
-        </tbody>
-    </table>
+        </div>
+    </div>
+
+
+
 }
 
 
 @code {
 
     //private bool IsDisabled { get; set; } = true;
+    private int fetchSize = 100;
+
+    private int pageSize = 1;
+
+    private int currentPage = 0;
+
+    private int? selectSize = 1;
+    private int? SelectSize
+    {
+        get
+        {
+            return selectSize;
+        }
+        set
+        {
+            selectSize = value;
+
+            pageSize = selectSize.Value;
+
+            Departments = AllDepartments.Skip(currentPage * selectSize.Value).Take(pageSize).ToList();
+        }
+    }
+
+    private List<DepartmentDto> AllDepartments { get; set; }
 
     private List<DepartmentDto> Departments { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Departments = await deptService.GetAll();
+        AllDepartments = await deptService.GetAll(currentPage, fetchSize);
+
+        Departments = AllDepartments.Skip(currentPage * pageSize).Take(pageSize).ToList();
     }
 
     private void HandleCanEdit(bool canEdit, int id)
@@ -57,6 +112,31 @@ else
     private async Task HandleCanSave(DepartmentDto arg)
     {
         await deptService.Update(arg);
+    }
+
+
+    private void HandlePrevClick()
+    {
+        if(currentPage > 0)
+        {
+            currentPage = currentPage - 1;
+            Departments = AllDepartments.Skip(currentPage * pageSize).Take(pageSize).ToList();
+        }
+
+    }
+
+    private void HandleNextClick()
+    {
+        if(currentPage <= (fetchSize/pageSize))
+        {
+            currentPage = currentPage + 1;
+            Departments = AllDepartments.Skip(currentPage * pageSize).Take(pageSize).ToList();
+        }
+    }
+
+    private void HandleOrderChange()
+    {
+        Departments = AllDepartments.Skip(0 * pageSize).Take(pageSize).OrderBy(o => o.Location).ToList();
     }
 
 

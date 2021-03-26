@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EmployeeService.UI.Business\EmployeeService.UI.Business.csproj" />
+    <ProjectReference Include="..\EmployeeService.UI.Model\EmployeeService.UI.Model.csproj" />
   </ItemGroup>
 
 </Project>

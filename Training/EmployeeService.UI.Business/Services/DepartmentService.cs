@@ -23,9 +23,9 @@ namespace EmployeeService.UI.Business.Services
            return await client.GetFromJsonAsync<List<SearchDto>>($"department/fullsearch?keyword={keyword}");
         }
 
-        public async Task<List<DepartmentDto>> GetAll()
+        public async Task<List<DepartmentDto>> GetAll(int currentPage, int pageSize)
         {
-            return await client.GetFromJsonAsync<List<DepartmentDto>>($"department");
+            return await client.GetFromJsonAsync<List<DepartmentDto>>($"department?currentPage={currentPage}&pageSize={pageSize}");
         }
 
         public async Task Add(DepartmentDto department)
