@@ -10,7 +10,7 @@ namespace EmployeeService.UI.Business.Model.Dto
 {
     public class DepartmentDto  
     {
-        [AcmeGridKeyColumn]
+      
         public int Id { get; set; }
         
         [AcmeGridColumn("Name")]

@@ -1,6 +1,4 @@
-﻿@using System.Dynamic
-@using System.Linq
-@using EmployeeService.UI.BlazorServer.ComponentModel
+﻿@using System.Linq
 @using EmployeeService.UI.Model
 @using System.Reflection
 @typeparam TItem
@@ -16,7 +14,7 @@
             <label>
                 <label>
                     Pagesize
-                    <select @bind="@PageSize">
+                    <select @onchange="@((e) => HandlePageSizeChange(e))">
                         @foreach (var item in PageSizeRange)
                         {
                             <option value="@item">@item</option>
@@ -57,7 +55,7 @@
                             var currentItem = item;
 
                             var dsprop = currentItem.GetType().GetProperties();
-                            var dspropKey = currentItem.GetType().GetProperties().FirstOrDefault(p => Attribute.IsDefined(p, typeof(AcmeGridKeyColumnAttribute)));
+
 
                             <tr>
                                 @foreach (var column in Columns)
@@ -65,11 +63,7 @@
                                     <td scope="row">@dsprop.First(x => x.Name == column).GetValue(currentItem, null)</td>
                                 }
 
-                                @if (dspropKey != null)
-                                {
-
-                                    <td scope="row"><button type="button" class="btn btn-primary" @onclick="@(() => DeleteCallback.InvokeAsync((TItem)currentItem))">Delete</button></td>
-                                }
+                                <td scope="row"><button type="button" class="btn btn-primary" @onclick="@(() => HandleDeleteClick((TItem)currentItem))">Delete</button></td>
 
                             </tr>
                         }
@@ -79,7 +73,7 @@
         </div>
         <div>
 
-            @if (DataSource.Any())
+            @if (DataSource.Count() > 1)
             {
                 <button style="margin-right:1em" type="button" @onclick="@(e => HandlePrev())" class="btn btn-secondary" disabled="@(!(@currentPage > 0))">Prev</button>
             }
@@ -119,11 +113,11 @@
 
     private int pageSize;
 
+    private bool isPageSizeChanged = false;
 
     [Parameter]
     public int PageSize
     {
-
         get
         {
             return pageSize;
@@ -131,7 +125,10 @@
 
         set
         {
-            pageSize = value;
+            if(pageSize == 0 || isPageSizeChanged)
+                pageSize = value;
+
+
             currentPage = 0;
             if (DataSource != null)
             {
@@ -154,16 +151,18 @@
     [Parameter]
     public EventCallback<bool> LoadCallback { get; set; }
 
+    private bool isComponentRenderedAfterFirstRender;
 
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-        if (firstRender)
+
+        if (!firstRender && !isComponentRenderedAfterFirstRender)
         {
+            isComponentRenderedAfterFirstRender = true;
             LoadCallback.InvokeAsync(true);
         }
     }
-
 
     public override Task SetParametersAsync(ParameterView parameters)
     {
@@ -193,6 +192,18 @@
 
         return base.SetParametersAsync(parameters);
 
+    }
+
+    private void HandlePageSizeChange(ChangeEventArgs e)
+    {
+        isPageSizeChanged = true;
+        PageSize = Convert.ToInt32(e.Value);
+        isPageSizeChanged = false;
+    }
+
+    private void HandleDeleteClick(TItem currentItem)
+    {
+        DeleteCallback.InvokeAsync(currentItem);
     }
 
     private void HandleNext(int pageNum)

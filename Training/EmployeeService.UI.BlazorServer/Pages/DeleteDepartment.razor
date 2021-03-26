@@ -42,8 +42,10 @@
         Departments = await deptService.GetAll(0, 10);
     }
 
-    private void OnDelete(DepartmentDto department)
+    private async Task OnDelete(DepartmentDto department)
     {
+        await deptService.Delete(department.Id);
+
         Departments.Remove(department);
     }
 
